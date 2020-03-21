@@ -880,12 +880,12 @@ bool ImGuiFileDialog::SelectDirectory(const FileInfoStruct& vInfos)
 #ifdef LINUX
 			if (s_fs_root == m_CurrentPath)
 			{
-				newPath = m_CurrentPath + infos.fileName;
+				newPath = m_CurrentPath + vInfos.fileName;
 			}
 			else
 			{
 #endif
-				newPath = m_CurrentPath + PATH_SEP + vInfos.fileName;
+				newPath = m_CurrentPath + PATH_SEP + vInfos.fileName; 
 #ifdef LINUX
 			}
 #endif
