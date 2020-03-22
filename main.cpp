@@ -43,11 +43,12 @@ static void glfw_error_callback(int error, const char* description)
 
 static bool canValidateDialog = false;
 
-inline void InfosPane(std::string vFilter, bool *vCantContinue) // if vCantContinue is false, the user cant validate the dialog
+inline void InfosPane(std::string vFilter, UserDatas vUserDatas, bool *vCantContinue) // if vCantContinue is false, the user cant validate the dialog
 {
 	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Infos Pane");
 	
 	ImGui::Text("Selected Filter : %s", vFilter.c_str());
+	ImGui::Text("User Datas : %s", (const char*)vUserDatas);
 
 	ImGui::Checkbox("if not checked you cant validate the dialog", &canValidateDialog);
 
@@ -179,6 +180,7 @@ int main(int, char**)
             ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
             ImGui::Checkbox("Another Window", &show_another_window);
 			ImGui::Separator();
+
 			if (ImGui::Button(ICON_IMFDLG_FOLDER_OPEN " Open File Dialog"))
 			{
 				ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", ICON_IMFDLG_FOLDER_OPEN " Choose File", ".*\0.cpp\0.h\0.hpp\0\0", ".");
@@ -194,7 +196,7 @@ int main(int, char**)
 			if (ImGui::Button(ICON_IMFDLG_SAVE " Save File Dialog with a custom pane"))
 			{
 				ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", ICON_IMFDLG_SAVE " Choose File", ".png\0.jpg\0\0",
-					".", "", std::bind(&InfosPane, std::placeholders::_1, std::placeholders::_2), 1, 350, "SaveFile");
+					".", "", std::bind(&InfosPane, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), 350, 1, "SaveFile");
 			}
 			ImGui::Separator();
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
@@ -226,7 +228,8 @@ int main(int, char**)
 				std::string filePathName = ImGuiFileDialog::Instance()->GetFilepathName();
 				std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 				std::string filter = ImGuiFileDialog::Instance()->GetCurrentFilter();
-				std::string userString = ImGuiFileDialog::Instance()->GetUserString();
+				// here convert from string because a string was passed as a userDatas, but it can be what you want
+				auto userDatas = std::string((const char*)ImGuiFileDialog::Instance()->GetUserDatas()); 
 				auto selection = ImGuiFileDialog::Instance()->GetSelection(); // multiselection
 
 				// action
